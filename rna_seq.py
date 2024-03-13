@@ -3,17 +3,29 @@ import os
 import subprocess
 import argparse
 import gzip
+import tarfile
 
 # Rest of the argparse setup
 
+# Set up argparse to handle command-line arguments
+parser = argparse.ArgumentParser(description='RNA-Seq analysis pipeline using STAR for alignment.')
+parser.add_argument('--reference_genome_dir', required=True, help='Directory of the STAR reference genome indices')
+parser.add_argument('--annotation_file_path', required=True, help='Path to the annotation GTF file')
+parser.add_argument('--unzip', action='store_true', help='Unzip .gz files before processing')
+parser.add_argument('--data_directory', required=True, help='Directory containing your FASTQ files')
+# Parse the command-line arguments
 args = parser.parse_args()
 
 # Function to unzip .gz files
-def unzip_gz_file(gz_path, output_path):
-    with gzip.open(gz_path, 'rt') as gz_file:
-        with open(output_path, 'w') as out_file:
-            for line in gz_file:
-                out_file.write(line)
+def unzip_file(file_path, output_path):
+    if file_path.endswith('.gz'):
+        with gzip.open(file_path, 'rt') as gz_file:
+            with open(output_path, 'w') as out_file:
+                for line in gz_file:
+                    out_file.write(line)
+    elif file_path.endswith('.tar'):
+        with tarfile.open(file_path, 'r') as tar_file:
+            tar_file.extractall(path=output_path)
 
 # Assuming args.unzip will be True if the --unzip flag is used
 if args.unzip:
@@ -34,13 +46,13 @@ else:
 
 # Continue with the original script for alignment and analysis
 
-# Set up argparse to handle command-line arguments
-parser = argparse.ArgumentParser(description='RNA-Seq analysis pipeline using STAR for alignment.')
-parser.add_argument('--reference_genome_dir', required=True, help='Directory of the STAR reference genome indices')
-parser.add_argument('--annotation_file_path', required=True, help='Path to the annotation GTF file')
-
-# Parse the command-line arguments
-args = parser.parse_args()
+# # Set up argparse to handle command-line arguments
+# parser = argparse.ArgumentParser(description='RNA-Seq analysis pipeline using STAR for alignment.')
+# parser.add_argument('--reference_genome_dir', required=True, help='Directory of the STAR reference genome indices')
+# parser.add_argument('--annotation_file_path', required=True, help='Path to the annotation GTF file')
+# parser.add_argument('--unzip', action='store_true', help='Unzip .gz files before processing')
+# # Parse the command-line arguments
+# args = parser.parse_args()
 
 # Assign arguments to variables
 reference_genome_dir = args.reference_genome_dir
@@ -52,10 +64,10 @@ stringtie_path = "stringtie"
 samtools_path = "samtools"
 
 # Define the directory containing your FASTQ files
-data_directory = "/path/to/your/data/folder"
+data_directory = args.data_directory
 
 # Define the output directory for your results
-output_directory = "/path/to/your/output/folder"
+output_directory = os.path.join(os.getcwd(), "output_folder")
 if not os.path.exists(output_directory):
     os.makedirs(output_directory)
 
