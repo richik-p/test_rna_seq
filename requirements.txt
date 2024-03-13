@@ -1,5 +1,5 @@
 libgcc-ng >=12
 star
-# stringtie
+stringtie
 samtools
 # Python's gzip is part of the standard library, so no need to list it herelibgcc-ng >=12
