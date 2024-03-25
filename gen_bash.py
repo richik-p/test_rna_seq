@@ -37,7 +37,7 @@ output_directory = args.output_dir
 reference_genome_dir = args.ref_genome_dir
 rsem_dir = args.rsem
 annotation_file_path = args.ann
-threads = args.threads
+threads = args.th
 adapter_file = args.adap
 
 # mkdir -p $OUTPUT_DIR
@@ -73,29 +73,29 @@ F=$OUTPUT_DIR/trimmed_files/hcc1395_normal_rep1_r2_unpaired.fq.gz
 java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE -threads $THREADS $A $B $C $D $E $F ILLUMINACLIP:/gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/trimmomatic_files/TruSeq3-PE-2.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
 '''
 
-code.append("A=" + os.path.join(data_directory, "$name" + "r1.fastq.gz"))
-code.append("B=" + os.path.join(data_directory, "$name" + "r2.fastq.gz"))
-code.append("C=" + os.path.join(output_directory, "trimmed_files", "$name" + "r1_paired.fq.gz"))
-code.append("D=" + os.path.join(output_directory, "trimmed_files", "$name" + "r1_unpaired.fq.gz"))
-code.append("E=" + os.path.join(output_directory, "trimmed_files", "$name" + "r2_paired.fq.gz"))
-code.append("F=" + os.path.join(output_directory, "trimmed_files", "$name" + "r2_unpaired.fq.gz"))
-code.append("java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE -threads "+ str(threads) +" $A $B $C $D $E $F ILLUMINACLIP:" + adapter_file + " LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36")
+code.append("A=" + os.path.join(data_directory, "${name}" + "r1.fastq.gz"))
+code.append("B=" + os.path.join(data_directory, "${name}" + "r2.fastq.gz"))
+code.append("C=" + os.path.join(output_directory, "trimmed_files", "${name}" + "r1_paired.fq.gz"))
+code.append("D=" + os.path.join(output_directory, "trimmed_files", "${name}" + "r1_unpaired.fq.gz"))
+code.append("E=" + os.path.join(output_directory, "trimmed_files", "${name}" + "r2_paired.fq.gz"))
+code.append("F=" + os.path.join(output_directory, "trimmed_files", "${name}" + "r2_unpaired.fq.gz"))
+code.append("java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE -threads "+ str(threads) +" $A $B $C $D $E $F ILLUMINACLIP:" + adapter_file + ":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36")
 
 # mkdir -p $OUTPUT_DIR/STAR_alignment
 
-code.append("mkdir -p " + os.path.join(output_directory, "$name" + "_STAR"))
+code.append("mkdir -p " + os.path.join(output_directory, "${name}" + "_STAR"))
 
 # STAR --genomeDir $GENOME_DIR --readFilesCommand zcat --readFilesIn $OUTPUT_DIR/trimmed_files/hcc1395_normal_rep1_r1_paired.fq.gz $OUTPUT_DIR/trimmed_files/hcc1395_normal_rep1_r2_paired.fq.gz --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --twopassMode Basic --outFilterMultimapNmax 1 --quantMode TranscriptomeSAM --runThreadN 10 --outFileNamePrefix $OUTPUT_DIR/STAR_alignment/hcc1395_normal_rep1
 
-code.append("STAR --genomeDir " + reference_genome_dir + " --readFilesCommand zcat --readFilesIn " + os.path.join(output_directory, "trimmed_files", "$name" + "r1_paired.fq.gz") + " " + os.path.join(output_directory, "trimmed_files", "$name" + "r2_paired.fq.gz") + " --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --twopassMode Basic --outFilterMultimapNmax 1 --quantMode TranscriptomeSAM --runThreadN " + str(threads) + " --outFileNamePrefix " + os.path.join(output_directory, "$name" + "_STAR"))
+code.append("STAR --genomeDir " + reference_genome_dir + " --readFilesCommand zcat --readFilesIn " + os.path.join(output_directory, "trimmed_files", "${name}" + "r1_paired.fq.gz") + " " + os.path.join(output_directory, "trimmed_files", "${name}" + "r2_paired.fq.gz") + " --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --twopassMode Basic --outFilterMultimapNmax 1 --quantMode TranscriptomeSAM --runThreadN " + str(threads) + " --outFileNamePrefix " + os.path.join(output_directory, "${name}" + "_STAR"))
 
 # mkdir -p $OUTPUT_DIR/RSEM_counts
 
-code.append("mkdir -p " + os.path.join(output_directory, "RSEM_counts"))
+code.append("mkdir -p " + os.path.join(output_directory,"RSEM_counts"))
 
 # rsem-calculate-expression --bam --no-bam-output -p 10 --paired-end --forward-prob 0 $OUTPUT_DIR/STAR_alignment/hcc1395_normal_rep1Aligned.toTranscriptome.out.bam $RSEM_DIR $OUTPUT_DIR/RSEM_counts/hcc1395_normal_rep1 >& $OUTPUT_DIR/RSEM_counts/hcc1395_normal_rep1.log
 
-code.append("rsem-calculate-expression --bam --no-bam-output -p 10 --paired-end --forward-prob 0 " + os.path.join(output_directory, "$name" + "_STAR", "$name" + "Aligned.toTranscriptome.out.bam") + " " + rsem_dir + " " + os.path.join(output_directory, "RSEM_counts", "$name") + " >& " + os.path.join(output_directory, "RSEM_counts", "$name") + ".log")
+code.append("rsem-calculate-expression --bam --no-bam-output -p 10 --paired-end --forward-prob 0 " + os.path.join(output_directory, "${name}" + "_STAR", "${name}" + "Aligned.toTranscriptome.out.bam") + " " + rsem_dir + " " + os.path.join(output_directory, "RSEM_counts", "${name}") + " >& " + os.path.join(output_directory, "RSEM_counts", "${name}") + ".log")
 
 code.append("done")
 
