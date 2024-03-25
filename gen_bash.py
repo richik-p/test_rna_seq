@@ -62,6 +62,24 @@ names = [f[0].rstrip("._") for f in true_names_and_file]
 code.append("for name in " + " ".join(names) + "; do")
 code.append("echo starting new analysis for ${name}")
 
+# unzip $OUTPUT_DIR/fastqc/${name}_r1_fastqc.zip
+# unzip $OUTPUT_DIR/fastqc/${name}_r2_fastqc.zip
+# R1_F=grep -q "Adapter Content\tfail" os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc", "fastqc_data.txt")
+# R2_F=grep -q "Adapter Content\tfail" os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc", "fastqc_data.txt")
+
+# if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]
+# then
+
+code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc.zip"))
+code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc.zip"))
+
+code.append("R1_F=grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc", "fastqc_data.txt"))
+code.append("R2_F=grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc", "fastqc_data.txt"))
+
+code.append("if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]")
+code.append("then")
+code.append("\n")
+
 '''
 A=$INPUT_DIR/hcc1395_normal_rep1_r1.fastq.gz  # Replace with the actual file names .fastq.gz or .fq.gz
 B=$INPUT_DIR/hcc1395_normal_rep1_r2.fastq.gz 
@@ -74,25 +92,6 @@ F=$OUTPUT_DIR/trimmed_files/hcc1395_normal_rep1_r2_unpaired.fq.gz
 
 java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE -threads $THREADS $A $B $C $D $E $F ILLUMINACLIP:/gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/trimmomatic_files/TruSeq3-PE-2.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
 '''
-
-# unzip $OUTPUT_DIR/fastqc/${name}_r1_fastqc.zip
-# unzip $OUTPUT_DIR/fastqc/${name}_r2_fastqc.zip
-# R1_F=grep -q "Adapter Content\tfail" os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc", "fastqc_data.txt")
-# R2_F=grep -q "Adapter Content\tfail" os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc", "fastqc_data.txt")
-
-# if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]
-# then
-
-code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc.zip"))
-code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc.zip"))
-
-code.append("R1_F=grep -q \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc", "fastqc_data.txt"))
-code.append("R2_F=grep -q \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc", "fastqc_data.txt"))
-
-code.append("if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]")
-code.append("then")
-code.append("\n")
-
 code.append("A=" + os.path.join(data_directory, "${name}" + "_r1.fastq.gz"))
 code.append("B=" + os.path.join(data_directory, "${name}" + "_r2.fastq.gz"))
 code.append("C=" + os.path.join(output_directory, "trimmed_files", "${name}" + "_r1_paired.fq.gz"))
@@ -133,8 +132,8 @@ code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc",
 # if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]
 # then
 
-code.append("R1_F=grep -q \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc", "fastqc_data.txt"))
-code.append("R2_F=grep -q \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc", "fastqc_data.txt"))
+code.append("R1_F=grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc", "fastqc_data.txt"))
+code.append("R2_F=grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc", "fastqc_data.txt"))
 
 code.append("if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]")
 code.append("then")
