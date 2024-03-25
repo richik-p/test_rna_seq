@@ -105,7 +105,7 @@ with open('gen_bash_trial.sh', 'w') as f:
 
 subprocess.run(["chmod", "+x", "gen_bash.py"], shell=True)
 # Make the bash script executable
-subprocess.run(["chmod", "+x", "gen_bash_trial.sh"], shell=True, executable="/bin/bash")
+subprocess.run(["chmod", "+x", "gen_bash_trial.sh"], shell=True)
 
 # Run the bash script
 subprocess.run(["./gen_bash_trial.sh"], shell=True)
