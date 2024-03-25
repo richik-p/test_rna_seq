@@ -48,8 +48,8 @@ fastqc -t 5 -o $OUTPUT_DIR/fastqc/ $INPUT_DIR/*.gz
 mkdir -p $OUTPUT_DIR/trimmed_files
 '''
 
-code.append("mkdir -p $" + os.path.join(output_directory, "fastqc"))
-code.append("fastqc -t 5 -o " + os.path.join(output_directory, "fastqc") + " " + os.path.join(output_directory, "*.gz"))
+code.append("mkdir -p " + os.path.join(output_directory, "fastqc"))
+code.append("fastqc -t 5 -o " + os.path.join(output_directory, "fastqc") + " " + os.path.join(data_directory, "*.gz"))
 code.append("mkdir -p " + os.path.join(output_directory, "trimmed_files"))
 
 fastq_files = [f for f in os.listdir(data_directory) if f.endswith('.fastq.gz') or f.endswith('.fq.gz')]
@@ -73,12 +73,12 @@ F=$OUTPUT_DIR/trimmed_files/hcc1395_normal_rep1_r2_unpaired.fq.gz
 java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE -threads $THREADS $A $B $C $D $E $F ILLUMINACLIP:/gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/trimmomatic_files/TruSeq3-PE-2.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
 '''
 
-code.append("A=" + os.path.join(data_directory, "${name}" + "r1.fastq.gz"))
-code.append("B=" + os.path.join(data_directory, "${name}" + "r2.fastq.gz"))
-code.append("C=" + os.path.join(output_directory, "trimmed_files", "${name}" + "r1_paired.fq.gz"))
-code.append("D=" + os.path.join(output_directory, "trimmed_files", "${name}" + "r1_unpaired.fq.gz"))
-code.append("E=" + os.path.join(output_directory, "trimmed_files", "${name}" + "r2_paired.fq.gz"))
-code.append("F=" + os.path.join(output_directory, "trimmed_files", "${name}" + "r2_unpaired.fq.gz"))
+code.append("A=" + os.path.join(data_directory, "${name}" + "_r1.fastq.gz"))
+code.append("B=" + os.path.join(data_directory, "${name}" + "_r2.fastq.gz"))
+code.append("C=" + os.path.join(output_directory, "trimmed_files", "${name}" + "_r1_paired.fq.gz"))
+code.append("D=" + os.path.join(output_directory, "trimmed_files", "${name}" + "_r1_unpaired.fq.gz"))
+code.append("E=" + os.path.join(output_directory, "trimmed_files", "${name}" + "_r2_paired.fq.gz"))
+code.append("F=" + os.path.join(output_directory, "trimmed_files", "${name}" + "_r2_unpaired.fq.gz"))
 code.append("java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE -threads "+ str(threads) +" $A $B $C $D $E $F ILLUMINACLIP:" + adapter_file + ":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36")
 
 # mkdir -p $OUTPUT_DIR/STAR_alignment
@@ -87,7 +87,7 @@ code.append("mkdir -p " + os.path.join(output_directory, "${name}" + "_STAR"))
 
 # STAR --genomeDir $GENOME_DIR --readFilesCommand zcat --readFilesIn $OUTPUT_DIR/trimmed_files/hcc1395_normal_rep1_r1_paired.fq.gz $OUTPUT_DIR/trimmed_files/hcc1395_normal_rep1_r2_paired.fq.gz --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --twopassMode Basic --outFilterMultimapNmax 1 --quantMode TranscriptomeSAM --runThreadN 10 --outFileNamePrefix $OUTPUT_DIR/STAR_alignment/hcc1395_normal_rep1
 
-code.append("STAR --genomeDir " + reference_genome_dir + " --readFilesCommand zcat --readFilesIn " + os.path.join(output_directory, "trimmed_files", "${name}" + "r1_paired.fq.gz") + " " + os.path.join(output_directory, "trimmed_files", "${name}" + "r2_paired.fq.gz") + " --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --twopassMode Basic --outFilterMultimapNmax 1 --quantMode TranscriptomeSAM --runThreadN " + str(threads) + " --outFileNamePrefix " + os.path.join(output_directory, "${name}" + "_STAR"))
+code.append("STAR --genomeDir " + reference_genome_dir + " --readFilesCommand zcat --readFilesIn " + os.path.join(output_directory, "trimmed_files", "${name}" + "_r1_paired.fq.gz") + " " + os.path.join(output_directory, "trimmed_files", "${name}" + "_r2_paired.fq.gz") + " --outSAMtype BAM SortedByCoordinate --outSAMunmapped Within --twopassMode Basic --outFilterMultimapNmax 1 --quantMode TranscriptomeSAM --runThreadN " + str(threads) + " --outFileNamePrefix " + os.path.join(output_directory, "${name}" + "_STAR", "${name}"))
 
 # mkdir -p $OUTPUT_DIR/RSEM_counts
 
@@ -103,8 +103,9 @@ code.append("done")
 with open('gen_bash_trial.sh', 'w') as f:
     f.write('\n'.join(code))
 
+subprocess.run(["chmod", "+x", "gen_bash.py"], shell=True)
 # Make the bash script executable
-subprocess.run(["chmod", "+x", "gen_bash_trial.sh"], shell=True)
+subprocess.run(["chmod", "+x", "gen_bash_trial.sh"], shell=True, executable="/bin/bash")
 
 # Run the bash script
 subprocess.run(["./gen_bash_trial.sh"], shell=True)
