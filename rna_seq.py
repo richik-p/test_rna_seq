@@ -13,7 +13,7 @@ parser.add_argument('--data_dir', required=True, help='Directory containing your
 parser.add_argument('--output_dir', required=True, help='Output directory for results')
 parser.add_argument('--ref_genome_dir', required=True, help='Directory of the STAR reference genome indices')
 parser.add_argument('--rsem', required=True, help='Path to the RSEM reference directory')
-parser.add_argument('--ann', required=True, help='Path to the annotation GTF file')
+parser.add_argument('--ann', help='Path to the annotation GTF file')
 parser.add_argument('--unzip', action='store_true', help='Unzip .gz files before processing')
 # Parse the command-line arguments
 args = parser.parse_args()
@@ -52,7 +52,7 @@ if args.unzip:
         fastq_files[fastq_files.index(gz_file)] = gz_file[:-3]
 else:
     # Original listing for non-compressed files
-    fastq_files = [f for f in os.listdir(data_directory) if f.endswith('.fastq') or f.endswith('.fq')]
+    fastq_files = [f for f in os.listdir(data_directory) if f.endswith('.fastq.gz') or f.endswith('.fq.gz')]
 
 
 # Define paths to your tools
@@ -62,7 +62,7 @@ samtools_path = "samtools"
 fastqc = "fastqc"
 
 # Define the output directory for your results
-output_directory = os.path.join(os.getcwd(), "output_folder")
+output_directory = os.path.join(os.getcwd(), output_directory)
 if not os.path.exists(output_directory):
     os.makedirs(output_directory)
 
@@ -72,7 +72,7 @@ if not os.path.exists(fastqc_output_dir):
     os.makedirs(fastqc_output_dir)
 
 # fastqc -t 5 -o $OUTPUT_DIR/fastqc/ $INPUT_DIR/*.gz in pyhton
-subprocess.run([fastqc, "-t", "5", "-o", fastqc_output_dir, os.path.join(data_directory, "*.gz")])
+subprocess.run([fastqc, "-t", "5", "-o", fastqc_output_dir, os.path.join(data_directory, "*.gz")], shell=True)
 
 # mkdir -p $OUTPUT_DIR/trimmed_files in python if not already present
 trimmed_files_dir = os.path.join(output_directory, "trimmed_files")
@@ -95,6 +95,7 @@ for n in true_names_and_file:
     r2_file = n[0] + 'r2' + r1_file.split('r1')[1]
     name = n[0].rstrip('._')
 
+    # TODO: change $EBROOTTRIMMOMATIC to the actual path of the trimmomatic jar file
     subprocess.run(["java", "-jar", "$EBROOTTRIMMOMATIC/trimmomatic-0.39.jar", "PE", "-threads", "8", 
                     os.path.join(data_directory, r1_file), os.path.join(data_directory, r2_file), 
                     os.path.join(trimmed_files_dir, name + "_r1_paired.fq.gz"), 

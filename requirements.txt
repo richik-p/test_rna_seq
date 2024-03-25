@@ -5,4 +5,5 @@ samtools
 trimmomatic
 star
 rsem
+fastqc
 # Python's gzip is part of the standard library, so no need to list it herelibgcc-ng >=12
