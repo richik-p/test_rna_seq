@@ -71,8 +71,8 @@ code.append("echo starting new analysis for ${name}")
 # if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]
 # then
 code.append("\n")
-code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc.zip") + "-d" + os.path.join(output_directory, "fastqc"))
-code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc.zip") + "-d" + os.path.join(output_directory, "fastqc"))
+code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc.zip") + " -d " + os.path.join(output_directory, "fastqc"))
+code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc.zip") + " -d " + os.path.join(output_directory, "fastqc"))
 
 code.append("R1_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc", "fastqc_data.txt") + ")")
 code.append("R2_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc", "fastqc_data.txt") + ")")
@@ -124,8 +124,8 @@ code.append("fastqc -t 5 -o " + os.path.join(output_directory, "trimmed_files", 
 # unzip $OUTPUT_DIR/trimmed_files/fastqc/${name}_r1_paired_fastqc.zip
 # unzip $OUTPUT_DIR/trimmed_files/fastqc/${name}_r2_paired_fastqc.zip
 
-code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc.zip") + "-d" + os.path.join(output_directory, "trimmed_files", "fastqc"))
-code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc.zip") + "-d" + os.path.join(output_directory, "trimmed_files", "fastqc"))
+code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc.zip") + " -d " + os.path.join(output_directory, "trimmed_files", "fastqc"))
+code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc.zip") + " -d " + os.path.join(output_directory, "trimmed_files", "fastqc"))
 
 # R1_F=grep -q "Adapter Content\tfail" os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc", "fastqc_data.txt")
 # R2_F=grep -q "Adapter Content\tfail" os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc", "fastqc_data.txt")
