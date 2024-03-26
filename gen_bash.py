@@ -19,6 +19,7 @@ code.append("ml STAR")
 code.append("ml RSEM")
 code.append("ml SAMtools")
 code.append("ml FastQC")
+code.append("ml Perl")
 code.append("\n")
 # Set up argparse to handle command-line arguments
 parser = argparse.ArgumentParser(description='RNA-Seq analysis pipeline using STAR for alignment.')
@@ -58,7 +59,7 @@ true_names_and_file = [(f.split('r1')[0], f) for f in fastq_files if f.endswith(
 names = [f[0].rstrip("._") for f in true_names_and_file]
 
 # add a for loop in the code list over the list names using bash script
-
+code.append("\n")
 code.append("for name in " + " ".join(names) + "; do")
 code.append("echo starting new analysis for ${name}")
 
@@ -69,14 +70,14 @@ code.append("echo starting new analysis for ${name}")
 
 # if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]
 # then
+code.append("\n")
+code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc.zip") + "-d" + os.path.join(output_directory, "fastqc"))
+code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc.zip") + "-d" + os.path.join(output_directory, "fastqc")
 
-code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc.zip"))
-code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc.zip"))
+code.append("R1_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc", "fastqc_data.txt") + ")")
+code.append("R2_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc", "fastqc_data.txt") + ")")
 
-code.append("R1_F=grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc", "fastqc_data.txt"))
-code.append("R2_F=grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc", "fastqc_data.txt"))
-
-code.append("if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]")
+code.append("if [ \"$R1_F\" -eq 0 ] && [ \"$R2_F\" -eq 0 ]")
 code.append("then")
 code.append("\n")
 
@@ -102,12 +103,12 @@ code.append("java -jar $EBROOTTRIMMOMATIC/trimmomatic-0.39.jar PE -threads "+ st
 code.append("\n")
 
 # else
-# mv os.path.join(data_directory, "${name}" + "_r1.fastq.gz") os.path.join(output_directory, "trimmed_files", "${name}" + "_r1_paired.fq.gz")
-# mv os.path.join(data_directory, "${name}" + "_r2.fastq.gz") os.path.join(output_directory, "trimmed_files", "${name}" + "_r2_paired.fq.gz")
+# cp os.path.join(data_directory, "${name}" + "_r1.fastq.gz") os.path.join(output_directory, "trimmed_files", "${name}" + "_r1_paired.fq.gz")
+# cp os.path.join(data_directory, "${name}" + "_r2.fastq.gz") os.path.join(output_directory, "trimmed_files", "${name}" + "_r2_paired.fq.gz")
 
 code.append("else")
-code.append("mv " + os.path.join(data_directory, "${name}" + "_r1.fastq.gz") + " " + os.path.join(output_directory, "trimmed_files", "${name}" + "_r1_paired.fq.gz"))
-code.append("mv " + os.path.join(data_directory, "${name}" + "_r2.fastq.gz") + " " + os.path.join(output_directory, "trimmed_files", "${name}" + "_r2_paired.fq.gz"))
+code.append("cp " + os.path.join(data_directory, "${name}" + "_r1.fastq.gz") + " " + os.path.join(output_directory, "trimmed_files", "${name}" + "_r1_paired.fq.gz"))
+code.append("cp " + os.path.join(data_directory, "${name}" + "_r2.fastq.gz") + " " + os.path.join(output_directory, "trimmed_files", "${name}" + "_r2_paired.fq.gz"))
 code.append("fi")
 code.append("\n")
 
@@ -123,8 +124,8 @@ code.append("fastqc -t 5 -o " + os.path.join(output_directory, "trimmed_files", 
 # unzip $OUTPUT_DIR/trimmed_files/fastqc/${name}_r1_paired_fastqc.zip
 # unzip $OUTPUT_DIR/trimmed_files/fastqc/${name}_r2_paired_fastqc.zip
 
-code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc.zip"))
-code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc.zip"))
+code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc.zip") + "-d" + os.path.join(output_directory, "trimmed_files", "fastqc"))
+code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc.zip") + "-d" + os.path.join(output_directory, "trimmed_files", "fastqc"))
 
 # R1_F=grep -q "Adapter Content\tfail" os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc", "fastqc_data.txt")
 # R2_F=grep -q "Adapter Content\tfail" os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc", "fastqc_data.txt")
@@ -132,10 +133,10 @@ code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc",
 # if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]
 # then
 
-code.append("R1_F=grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc", "fastqc_data.txt"))
-code.append("R2_F=grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc", "fastqc_data.txt"))
+code.append("R1_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc", "fastqc_data.txt") + ")")
+code.append("R2_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc", "fastqc_data.txt") + ")")
 
-code.append("if [ $R1_F -eq 0 ] && [ $R2_F -eq 0 ]")
+code.append("if [ \"$R1_F\" -eq 0 ] && [ \"$R2_F\" -eq 0 ]")
 code.append("then")
 code.append("\n")
 
@@ -164,8 +165,7 @@ code.append("fi")
 # fi
 code.append("fi")
 
-
-
+code.append("\n")
 
 
 # mkdir -p $OUTPUT_DIR/STAR_alignment
