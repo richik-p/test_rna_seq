@@ -72,7 +72,7 @@ code.append("echo starting new analysis for ${name}")
 # then
 code.append("\n")
 code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc.zip") + "-d" + os.path.join(output_directory, "fastqc"))
-code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc.zip") + "-d" + os.path.join(output_directory, "fastqc")
+code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc.zip") + "-d" + os.path.join(output_directory, "fastqc"))
 
 code.append("R1_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc", "fastqc_data.txt") + ")")
 code.append("R2_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc", "fastqc_data.txt") + ")")
@@ -196,3 +196,11 @@ with open('gen_bash_trial.sh', 'w') as f:
 
 # Run the bash script
 subprocess.run(["./gen_bash_trial.sh"], shell=True)
+
+# python gen_bash.py
+#--data_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/fastq_files 
+#--output_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/new_analysis 
+#--ref_genome_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/STAR_reference_genome 
+#--rsem /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/RSEM_reference 
+#--ann /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/annotation.gtf --th 10 
+#--adap /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/TruSeq3-PE-2.fa
