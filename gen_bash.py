@@ -77,7 +77,7 @@ code.append("unzip " + os.path.join(output_directory, "fastqc", "${name}" + "_r2
 code.append("R1_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r1_fastqc", "fastqc_data.txt") + ")")
 code.append("R2_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "fastqc", "${name}" + "_r2_fastqc", "fastqc_data.txt") + ")")
 
-code.append("if [ \"$R1_F\" -eq 0 ] && [ \"$R2_F\" -eq 0 ]")
+code.append("if [ \"$R1_F\" -eq 1 ] && [ \"$R2_F\" -eq 1 ]")
 code.append("then")
 code.append("\n")
 
@@ -136,7 +136,7 @@ code.append("unzip " + os.path.join(output_directory, "trimmed_files", "fastqc",
 code.append("R1_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r1_paired_fastqc", "fastqc_data.txt") + ")")
 code.append("R2_F=$(grep -P -c \"Adapter Content\tfail\" " + os.path.join(output_directory, "trimmed_files", "fastqc", "${name}" + "_r2_paired_fastqc", "fastqc_data.txt") + ")")
 
-code.append("if [ \"$R1_F\" -eq 0 ] && [ \"$R2_F\" -eq 0 ]")
+code.append("if [ \"$R1_F\" -eq 1 ] && [ \"$R2_F\" -eq 1 ]")
 code.append("then")
 code.append("\n")
 
