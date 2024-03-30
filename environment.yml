@@ -6,11 +6,11 @@ channels:
 dependencies:
   - libgcc-ng>=12
   - star
-  - stringtie
+  # - stringtie
   - samtools
   - trimmomatic
   - rsem
   - fastqc
-  - pybedtools
-  - bedtools
-  - bedops
+  # - pybedtools
+  # - bedtools
+  # - bedops
