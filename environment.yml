@@ -1,0 +1,16 @@
+name: rna_seq_env
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - libgcc-ng>=12
+  - star
+  - stringtie
+  - samtools
+  - trimmomatic
+  - rsem
+  - fastqc
+  - pybedtools
+  - bedtools
+  - bedops
