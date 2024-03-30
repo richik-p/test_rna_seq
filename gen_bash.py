@@ -195,6 +195,6 @@ with open('gen_bash_trial.sh', 'w') as f:
 # subprocess.run(["chmod", "+x", "gen_bash_trial.sh"], shell=True)
 
 # Run the bash script
-subprocess.run(["./gen_bash_trial.sh"], shell=True)
+#subprocess.run(["./gen_bash_trial.sh"], shell=True)
 
 # python gen_bash.py --data_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/fastq_files --output_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/new_analysis --ref_genome_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/STAR_reference_genome --rsem /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/RSEM_reference --th 10 --adap /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/TruSeq3-PE-2.fa
