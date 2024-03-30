@@ -16,4 +16,4 @@ fi
 
 # Activate the environment
 echo "Activating environment '$ENV_NAME'."
-source activate $ENV_NAME
+conda activate $ENV_NAME
