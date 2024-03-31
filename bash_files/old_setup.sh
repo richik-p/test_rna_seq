@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# worked in mcleary
+
 # Define the name of the new environment
 ENV_NAME="rna_seq_env"
 

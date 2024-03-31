@@ -4,20 +4,16 @@
 # Get the TPM_counts column from each os.path.join(output_directory, "RSEM_counts", "${name}") file and write it to a new file
 
 
-
+import gen_bash
 import os
-import argparse
 import pandas as pd
 import argparse
 
-parser = argparse.ArgumentParser(description='RNA-Seq analysis pipeline for differential expression analysis')
-parser.add_argument('--output_dir', required=True, help='Output directory for results')
-args = parser.parse_args()
 
-output_directory = args.output_dir
+output_directory = gen_bash.output_directory
 
 list_of_rsem_files = [f for f in os.listdir(os.path.join(output_directory, "RSEM_counts")) if f.endswith('genes.results')]
-
+list_of_rsem_files.sort()
 # Get the TPM_counts column from each os.path.join(output_directory, "RSEM_counts", "${name}") file and write it to a new file
 
 # Create a new text file called TPM_counts.txt to write the TPM counts to
@@ -35,7 +31,6 @@ gene_id = first_file_df['gene_id']
 
 TPM_counts_df = pd.DataFrame(gene_id)
 raw_counts_df = pd.DataFrame(gene_id)
-
 for file in list_of_rsem_files:
     file_path = os.path.join(output_directory, "RSEM_counts", file)
     df = pd.read_csv(file_path, sep='\t')

@@ -1,0 +1,15 @@
+name: deseq
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-base
+  - r-essentials
+  - r-deseq2
+  - r-ggplot2
+  - r-pheatmap
+  - r-rcolorbrewer
+  - r-dplyr
+  - bioconductor-apeglm
+  
