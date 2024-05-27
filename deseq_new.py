@@ -135,7 +135,8 @@ print(paste("Number of significant DEGs (6wk):", sum(resordered_6wk$padj < 0.01 
 commands.append('output_res <- as.data.frame(res)')
 commands.append('resordered <- data.frame(output_res[order(output_res$padj, na.last=NA),])')
 commands.append('print(paste("Number of significant DEGs:", sum(resordered$padj < alpha & abs(resordered$log2FoldChange) >= 1, na.rm=TRUE)))')
-
+commands.append('deg <- resordered[resordered$padj < alpha & abs(resordered$log2FoldChange) >= 1, ]')
+commands.append('write.table(deg, file='+os.path.join(output_directory, "deseq", "deseq_results.txt")+ ', sep="\\t")')
 # generate a file in r script to run deseq2
-with open("DESeq2_script.r", 'w') as f: # TODO change output file location later 
+with open("deseq_script.r", 'w') as f: # TODO change output file location later 
     f.write("\n".join(commands))
