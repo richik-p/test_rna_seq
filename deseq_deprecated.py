@@ -24,7 +24,9 @@ commands.append('library("pheatmap")')
 commands.append('library("RColorBrewer")')
 
 # read in raw counts
-commands.append('raw_counts <- read.table("'+os.path.join(output_directory, "RSEM_counts", "counts.txt")+'", header=TRUE, row.names=1, sep="\t")')
+commands.append('raw_counts <- read.table("'+os.path.join(output_directory, "RSEM_counts", "raw_counts.txt")+'", header=TRUE, row.names=1, sep="\\t")')
+
+commands.append('raw_counts <- round(raw_counts)')
 
 # get number of replicates in each group from file names
 condition1 = ""
@@ -49,25 +51,29 @@ commands.append('rownames(metadata) <- colnames(raw_counts)')
 commands.append('dds <- DESeqDataSetFromMatrix(countData = raw_counts, colData = metadata, design = ~ condition)')
 
 # convert to factors
-commands.append('dds$condition <- factor(dds$condition), levels = c(\"'+condition1+'\", \"'+condition2+'\"))')
+commands.append('dds$condition <- factor(dds$condition, levels = c(\"'+condition1+'\", \"'+condition2+'\"))')
 
 # run DESeq2
 commands.append('dds <- DESeq(dds)')
 
-commands.append('res <- results(dds), name = \"'+condition2+'_vs_'+condition1+'\"), alpha = alpha)') # get alpha from user input
+commands.append('res <- results(dds, alpha = alpha)') # get alpha from user input TODO add param: name = \"'+condition2+'_vs_'+condition1+'\",
 
 # subset out for only significant genes padj < 0.05
-commands.append('resSig <- res[which(res$padj < alpha), ]')
+# commands.append('resSig <- res[which(res$padj < alpha), ]')
 
 # convert to rlog
 commands.append('rld <- rlog(dds, blind=FALSE)') # check if blind should be true or false
 
-# get top 50 genes 
-number_of_top_genes = 50
-commands.append('topGenes <- head(order(rowMeans(counts(dds, normalized=TRUE),decreasing=TRUE), number_of_top_genes)') # TODO variable for number of top genes
 
+
+##############################
+# get top 50 genes 
+# mat <- assay(ddsMat_6wk_rlog[row.names(res_sig_6wk)])[1:30, ]
+number_of_top_genes = 50
+commands.append('topGenes <- assay(rld[row.names(res)])[1:'+str(number_of_top_genes)+', ]')
 # plot heatmap
-commands.append('pheatmap(assay(rld)[topGenes,], cluster_rows=FALSE, show_rownames=FALSE, cluster_cols=FALSE, annotation_col=dds$condition, annotation_colors=list(condition=c('+condition1+'="blue", '+condition2+'="red"))), filename=os.path.join(output_directory, "DESeq2", "heatmap.pdf"))') # TODO give option to change file type pdf vs png 
+commands.append('pheatmap(assay(rld)[topGenes,], cluster_rows=FALSE, show_rownames=FALSE, cluster_cols=FALSE, annotation_col=dds$condition, annotation_colors=list(condition=c('+condition1+'="blue", '+condition2+'="red"))), filename='+os.path.join(output_directory, "DESeq2", "heatmap.pdf")+')') # TODO give option to change file type pdf vs png 
+##############################
 
 # plot MA plot
 commands.append('plotMA(res, main="DESeq2", ylim=c(-2,2))')
@@ -83,9 +89,9 @@ commands.append('dev.copy(pdf, ' + os.path.join(output_directory, "DESeq2", "PCA
 commands.append('dev.off()')
 
 # LFC shrinkage
-commands.append('resLFC <- lfcShrink(dds, coef=\"'+condition2+'_vs_'+condition1+'\", res=res, type="apeglm")')
+commands.append('resLFC <- lfcShrink(dds, res=res, type="apeglm")') # TODO add param : coef=\"'+condition2+'_vs_'+condition1+'\",
 commands.append('resLFC <- as.data.frame(resLFC)')
-commands.append('write.table(resLFC, file='+os.path.join(output_directory, "DESeq2", "LFC_shrinkage.txt")+', sep="\t")')
+# commands.append('write.table(resLFC, file='+os.path.join(output_directory, "DESeq2", "LFC_shrinkage.txt")+', sep="\\t")')
 
 
 # plot Volcano
@@ -95,12 +101,13 @@ commands.append('dev.copy(pdf, ' +os.path.join(output_directory, "DESeq2", "Volc
 commands.append('dev.off()')
 
 # save results
-commands.append('write.table(resLFC, file='+os.path.join(output_directory, "DESeq2", "DESeq2_results.txt")+ ', sep="\t")')
+commands.append('write.table(resLFC, file='+os.path.join(output_directory, "DESeq2", "DESeq2_results.txt")+ ', sep="\\t")')
 
 # subset out for only significant genes padj < 0.05 and log2FC > 1 and write to file
 log2FC_cutoff = 1 # TODO give option to change log2FC cutoff
+commands.append('log2FC_cutoff <- '+ str(log2FC_cutoff))
 commands.append('resSig <- resLFC[which(resLFC$padj < alpha & abs(resLFC$log2FoldChange) > log2FC_cutoff), ]') # TODO give option to change log2FC cutoff and padj cutoff
-commands.append('write.table(resSig, file='+os.path.join(output_directory, "DESeq2", "DESeq2_significant_results.txt")+ ', sep="\t")')
+commands.append('write.table(resSig, file='+os.path.join(output_directory, "DESeq2", "DESeq2_significant_results.txt")+ ', sep="\\t")')
 
 # generate a file in r script to run deseq2
 with open("DESeq2_script.r", 'w') as f: # TODO change output file location later 
