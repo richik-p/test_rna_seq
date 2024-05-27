@@ -2,7 +2,7 @@ name: deseq
 channels:
   - conda-forge
   - bioconda
-  - r
+  - anaconda
   - defaults
 dependencies:
   - r-base
@@ -13,4 +13,6 @@ dependencies:
   - r-rcolorbrewer
   - r-dplyr
   - bioconductor-apeglm
+  - pandas
+  - numpy
   

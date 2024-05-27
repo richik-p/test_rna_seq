@@ -3,7 +3,6 @@ import subprocess
 import argparse
 import gzip
 import tarfile
-import deseq
 
 code = []
 code.append("#!/bin/bash")
