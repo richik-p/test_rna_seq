@@ -7,7 +7,7 @@ channels:
 dependencies:
   - r-base
   - r-essentials
-  - r-deseq2
+  - bioconductor-deseq2
   - r-ggplot2
   - r-pheatmap
   - r-rcolorbrewer
