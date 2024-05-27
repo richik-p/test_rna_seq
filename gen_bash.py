@@ -90,9 +90,7 @@ E=$OUTPUT_DIR/trimmed_files/hcc1395_normal_rep1_r2_paired.fq.gz # STAR uses pair
 F=$OUTPUT_DIR/trimmed_files/hcc1395_normal_rep1_r2_unpaired.fq.gz 
 #G=ILLUMINACLIP:$INPUT_DIR/TruSeq3-PE.fa:2:30:10  # TruSeq3-PE.fa is the adapter file in form .fa or .fasta
 #H=LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-# get output of command: which trimmomatic in the variable TRIMMOMATIC_PATH
-TRIMMOMATIC_PATH=$(which trimmomatic)
-export TRIMMOMATIC_PATH
+
 java -jar $TRIMMOMATIC_PATH/trimmomatic-0.39.jar PE -threads $THREADS $A $B $C $D $E $F ILLUMINACLIP:/gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/trimmomatic_files/TruSeq3-PE-2.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
 '''
 code.append("A=" + os.path.join(data_directory, "${name}" + "_r1.fastq.gz"))
@@ -102,9 +100,7 @@ code.append("D=" + os.path.join(output_directory, "trimmed_files", "${name}" + "
 code.append("E=" + os.path.join(output_directory, "trimmed_files", "${name}" + "_r2_paired.fq.gz"))
 code.append("F=" + os.path.join(output_directory, "trimmed_files", "${name}" + "_r2_unpaired.fq.gz"))
 
-code.append("TRIMMOMATIC_PATH=$(which trimmomatic)")
-code.append("export TRIMMOMATIC_PATH")
-code.append("java -jar $TRIMMOMATIC_PATH/trimmomatic-0.39.jar PE -threads "+ str(threads) +" $A $B $C $D $E $F ILLUMINACLIP:" + adapter_file + ":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36")
+code.append("trimmomatic PE -threads "+ str(threads) +" $A $B $C $D $E $F ILLUMINACLIP:" + adapter_file + ":2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36")
 code.append("\n")
 
 # else
