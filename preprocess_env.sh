@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILE = "preprocess_env.yml"
+FILE="preprocess_env.yml"
 # Extract the name of the environment from the preprocess_env.yml file
 ENV_NAME=$(grep 'name:' $FILE | cut -d ' ' -f 2)
 
