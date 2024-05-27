@@ -2,6 +2,7 @@ name: deseq
 channels:
   - conda-forge
   - bioconda
+  - r
   - defaults
 dependencies:
   - r-base
