@@ -28,7 +28,9 @@ commands.append('raw_counts <- read.table(os.path.join(output_directory, "raw_co
 # get number of replicates in each group from file names
 condition1 = ""
 condition2 = ""
-for file in os.listdir(os.path.join(output_directory, "RSEM_counts")).sort():
+files = os.listdir(os.path.join(output_directory, "RSEM_counts"))
+files.sort()
+for file in files:
     if file.endswith('genes.results'):
         if "normal" in file:
             condition1 = "normal"

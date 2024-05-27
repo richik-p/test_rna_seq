@@ -219,7 +219,7 @@ code.append("sed -i '1d' " + os.path.join(output_directory, "raw_counts.txt"))
 code.append("sed -i '1s/^/gene_id\t" + "\t".join([f.split(".")[0] for f in os.listdir(os.path.join(output_directory, "RSEM_counts")) if f.endswith('genes.results')]) + "\\n/' " + os.path.join(output_directory, "raw_counts.txt"))
 
 # create a DESeq2 folder in the output directory
-code.append("mkdir -p " + os.path.join(output_directory, "DESeq2"))
+code.append("mkdir -p " + os.path.join(output_directory, "deseq"))
 
 # Write the code to a bash script
 with open('gen_bash_trial.sh', 'w') as f:
