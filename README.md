@@ -9,4 +9,6 @@ run `./preprocess_env.sh`
 run `gen_bash.py`
 
 ## Step 3
+run `chmod +x gen_bash_trial.sh`
+
 run `gen_bash_trial.sh`
