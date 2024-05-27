@@ -33,6 +33,9 @@ for file in os.listdir(os.path.join(output_directory, "RSEM_counts")).sort():
             condition2 = "tumor"
             break
 
+# add alpha for padj cutoff by user input
+commands.append('alpha <- 0.05') # get alpha from user input
+
 # create metadata files in r to commands list
 commands.append('metadata <- data.frame(condition = c(rep ('+condition1+', 3), rep('+condition2+', 3)))')
 commands.append('rownames(metadata) <- colnames(raw_counts)')
@@ -46,16 +49,17 @@ commands.append('dds$condition <- factor(dds$condition), levels = c('+condition1
 # run DESeq2
 commands.append('dds <- DESeq(dds)')
 
-commands.append('res <- results(dds), name = '+condition2+'_vs_'+condition1+'), alpha = 0.05)') # get alpha from user input
+commands.append('res <- results(dds), name = '+condition2+'_vs_'+condition1+'), alpha = alpha)') # get alpha from user input
 
 # subset out for only significant genes padj < 0.05
-commands.append('resSig <- res[which(res$padj < 0.05), ]')
+commands.append('resSig <- res[which(res$padj < alpha), ]')
 
 # convert to rlog
 commands.append('rld <- rlog(dds, blind=FALSE)') # check if blind should be true or false
 
 # get top 50 genes 
-commands.append('topGenes <- head(order(rowMeans(counts(dds, normalized=TRUE),decreasing=TRUE), 50)') # TODO variable for number of top genes
+number_of_top_genes = 50
+commands.append('topGenes <- head(order(rowMeans(counts(dds, normalized=TRUE),decreasing=TRUE), number_of_top_genes)') # TODO variable for number of top genes
 
 # plot heatmap
 commands.append('pheatmap(assay(rld)[topGenes,], cluster_rows=FALSE, show_rownames=FALSE, cluster_cols=FALSE, annotation_col=dds$condition, annotation_colors=list(condition=c('+condition1+'="blue", '+condition2+'="red"))), filename=os.path.join(output_directory, "DESeq2", "heatmap.pdf"))') # TODO give option to change file type pdf vs png 
@@ -74,14 +78,14 @@ commands.append('dev.copy(pdf, os.path.join(output_directory, "DESeq2", "PCA_plo
 commands.append('dev.off()')
 
 # LFC shrinkage
-commands.append('resLFC <- lfcShrink(dds, coef='+condition2+'_'+condition1+', type="apeglm")')
+commands.append('resLFC <- lfcShrink(dds, coef='+condition2+'_'+condition1+', res=res, type="apeglm")')
 commands.append('resLFC <- as.data.frame(resLFC)')
 commands.append('write.table(resLFC, file=os.path.join(output_directory, "DESeq2", "LFC_shrinkage.txt"), sep="\t")')
 
 
 # plot Volcano
 commands.append('plot(resLFC$log2FoldChange, -log10(resLFC$padj), pch=20, cex=0.3, col="black")')
-commands.append('points(resLFC$log2FoldChange[which(resLFC$padj < 0.05)], -log10(resLFC$padj[which(resLFC$padj < 0.05)]), pch=20, cex=0.3, col="red")')
+commands.append('points(resLFC$log2FoldChange[which(resLFC$padj < alpha)], -log10(resLFC$padj[which(resLFC$padj < alpha)]), pch=20, cex=0.3, col="red")')
 commands.append('dev.copy(pdf, os.path.join(output_directory, "DESeq2", "Volcano_plot.pdf"))')
 commands.append('dev.off()')
 
@@ -89,7 +93,8 @@ commands.append('dev.off()')
 commands.append('write.table(resLFC, file=os.path.join(output_directory, "DESeq2", "DESeq2_results.txt"), sep="\t")')
 
 # subset out for only significant genes padj < 0.05 and log2FC > 1 and write to file
-commands.append('resSig <- resLFC[which(resLFC$padj < 0.05 & abs(resLFC$log2FoldChange) > 1), ]') # TODO give option to change log2FC cutoff and padj cutoff
+log2FC_cutoff = 1 # TODO give option to change log2FC cutoff
+commands.append('resSig <- resLFC[which(resLFC$padj < alpha & abs(resLFC$log2FoldChange) > log2FC_cutoff), ]') # TODO give option to change log2FC cutoff and padj cutoff
 commands.append('write.table(resSig, file=os.path.join(output_directory, "DESeq2", "DESeq2_significant_results.txt"), sep="\t")')
 
 # generate a file in r script to run deseq2

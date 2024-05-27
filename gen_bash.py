@@ -26,7 +26,7 @@ parser = argparse.ArgumentParser(description='RNA-Seq analysis pipeline using ST
 parser.add_argument('--data_dir', required=True, help='Directory containing your FASTQ files')
 parser.add_argument('--output_dir', required=True, help='Output directory for results. No need to create the directory before passing, created on running!')
 parser.add_argument('--ref_genome_dir', help='Directory of the STAR reference genome indices')
-parser.add_argument('--rsem', help='Path to the RSEM reference directory')
+parser.add_argument('--rsem', help='Path to the RSEM reference directory. Add prefix ')
 parser.add_argument('--ann', help='Path to the annotation GTF file')
 parser.add_argument('--th', type=int, default=2, help='Number of threads to use for alignment')
 parser.add_argument('--adap', help='Path to the adapter file for Trimmomatic')
@@ -183,6 +183,11 @@ code.append("mkdir -p " + os.path.join(output_directory,"RSEM_counts"))
 
 # rsem-calculate-expression --bam --no-bam-output -p 10 --paired-end --forward-prob 0 $OUTPUT_DIR/STAR_alignment/hcc1395_normal_rep1Aligned.toTranscriptome.out.bam $RSEM_DIR $OUTPUT_DIR/RSEM_counts/hcc1395_normal_rep1 >& $OUTPUT_DIR/RSEM_counts/hcc1395_normal_rep1.log
 
+# get prefix of files in rsem directory
+
+rsem_file =  os.listdir(rsem_dir)[0]
+rsem_prefix = rsem_file.split(".")[0]
+rsem_dir = os.path.join(rsem_dir, rsem_prefix)
 code.append("rsem-calculate-expression --bam --no-bam-output -p 10 --paired-end --forward-prob 0 " + os.path.join(output_directory, "${name}" + "_STAR", "${name}" + "Aligned.toTranscriptome.out.bam") + " " + rsem_dir + " " + os.path.join(output_directory, "RSEM_counts", "${name}") + " >& " + os.path.join(output_directory, "RSEM_counts", "${name}") + ".log")
 
 code.append("done")
