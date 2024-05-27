@@ -192,6 +192,32 @@ code.append("rsem-calculate-expression --bam --no-bam-output -p 10 --paired-end 
 
 code.append("done")
 
+# get the files from outputdir/RSEM_counts ending with .genes.results as a list
+# paste the files in the list to get a matrix of counts and then run | cut -f1,5,12,19,26 >raw_counts.txt 
+# after cut -f1, there should be numbers starting from 5 and incrementing by 7 till the number of files in the list
+
+command = "paste "
+count = 0
+for file in os.listdir(os.path.join(output_directory, "RSEM_counts")):
+    if file.endswith('genes.results'):
+        command += os.path.join(output_directory, "RSEM_counts", file) + " "
+        count += 1
+command += "| cut -f1"
+for i in range(5, 5 + 7*count, 7):
+    command += "," + str(i)
+command += " > " + os.path.join(output_directory, "raw_counts.txt")
+
+code.append(command)
+
+# delete first line of raw_counts.txt
+code.append("sed -i '1d' " + os.path.join(output_directory, "raw_counts.txt"))
+
+# substitute the first line of raw_counts.txt to gene_id, then the tab separated values of the files names in order from os.listdir(os.path.join(output_directory, "RSEM_counts")
+# example of the first line: gene_id hcc1395_normal_rep1 hcc1395_normal_rep2 hcc1395_normal_rep3 hcc1395_tumor_rep1 hcc1395_tumor_rep2 hcc1395_tumor_rep3
+# add the code to the bash script
+
+code.append("sed -i '1s/^/gene_id\t" + "\t".join([f.split(".")[0] for f in os.listdir(os.path.join(output_directory, "RSEM_counts")) if f.endswith('genes.results')]) + "\\n/' " + os.path.join(output_directory, "raw_counts.txt"))
+
 # Write the code to a bash script
 with open('gen_bash_trial.sh', 'w') as f:
     f.write('\n'.join(code))
@@ -205,3 +231,4 @@ with open('gen_bash_trial.sh', 'w') as f:
 
 # python gen_bash.py --data_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/fastq_files --output_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/new_analysis --ref_genome_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/STAR_reference_genome --rsem /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/RSEM_reference --th 10 --adap /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/TruSeq3-PE-2.fa
 # python gen_bash.py --data_dir ./Data --output_dir ./output --ref_genome_dir /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/STAR_reference_genome --rsem /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/RSEM_reference --th 10 --adap /gpfs/gibbs/pi/noonan/ap2549/RNA-seq_NSC/new_analysis_20230101/TruSeq3-PE-2.fa
+
