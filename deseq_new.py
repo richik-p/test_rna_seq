@@ -136,3 +136,6 @@ commands.append('output_res <- as.data.frame(res)')
 commands.append('resordered <- data.frame(output_res[order(output_res$padj, na.last=NA),])')
 commands.append('print(paste("Number of significant DEGs:", sum(resordered$padj < alpha & abs(resordered$log2FoldChange) >= 1, na.rm=TRUE)))')
 
+# generate a file in r script to run deseq2
+with open("DESeq2_script.r", 'w') as f: # TODO change output file location later 
+    f.write("\n".join(commands))
