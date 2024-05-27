@@ -34,7 +34,7 @@ for file in files:
     if file.endswith('genes.results'):
         if "normal" in file:
             condition1 = "normal"
-        else:
+        elif "tumor" in file:
             condition2 = "tumor"
 
 # add alpha for padj cutoff by user input
