@@ -2,16 +2,19 @@
 # conda create -n deseq2 -c bioconda r-deseq2 r-ggplot2 r-essentials r-base
 # done 
 
-import gen_bash
 import os
 import sys
 import pandas as pd
 import numpy as np
 import subprocess
+import argparse
 
 # generate a file in r script to run deseq2
-output_directory = gen_bash.output_directory
-# subprocess.run(["mkdir", "-p", os.path.join(output_directory, "DESeq2")])
+parser = argparse.ArgumentParser(description='RNA-Seq analysis pipeline using STAR for alignment.')
+parser.add_argument('--output_dir', required=True, help='Output directory for results')
+
+args = parser.parse_args()
+output_directory = args.output_dir
 
 commands = []
 
