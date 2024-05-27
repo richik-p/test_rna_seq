@@ -11,7 +11,7 @@ import subprocess
 
 # generate a file in r script to run deseq2
 output_directory = gen_bash.output_directory
-subprocess.run(["mkdir", "-p", os.path.join(output_directory, "DESeq2")])
+# subprocess.run(["mkdir", "-p", os.path.join(output_directory, "DESeq2")])
 
 commands = []
 
@@ -99,8 +99,7 @@ commands.append('write.table(resSig, file=os.path.join(output_directory, "DESeq2
 
 # generate a file in r script to run deseq2
 with open(os.path.join(output_directory, "DESeq2", "DESeq2_script.R"), 'w') as f: # TODO change output file location later 
-    for command in commands:
-        f.write(command + '\n')
+    f.write("\n".join(commands))
 
 # run the script
 # subprocess.run(["Rscript", os.path.join(output_directory, "DESeq2", "DESeq2_script.R")])

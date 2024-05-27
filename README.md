@@ -12,3 +12,14 @@ run `gen_bash.py`
 run `chmod +x gen_bash_trial.sh`
 
 run `gen_bash_trial.sh`
+
+## Step 4
+run `chmod +x deseq_env.sh`
+
+run `./deseq_env.sh`
+
+## Step 5
+run `deseq.py`
+
+## Step 6
+run `DESeq2_script.R`
