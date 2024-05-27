@@ -24,7 +24,7 @@ code.append("\n")
 # Set up argparse to handle command-line arguments
 parser = argparse.ArgumentParser(description='RNA-Seq analysis pipeline using STAR for alignment.')
 parser.add_argument('--data_dir', required=True, help='Directory containing your FASTQ files')
-parser.add_argument('--output_dir', required=True, help='Output directory for results')
+parser.add_argument('--output_dir', required=True, help='Output directory for results. No need to create the directory before passing, created on running!')
 parser.add_argument('--ref_genome_dir', help='Directory of the STAR reference genome indices')
 parser.add_argument('--rsem', help='Path to the RSEM reference directory')
 parser.add_argument('--ann', help='Path to the annotation GTF file')
