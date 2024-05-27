@@ -2,6 +2,7 @@
 
 ## Step 1
 run `chmod +x preprocess_env.sh`
+
 run `./preprocess_env.sh`
 
 ## Step 2
