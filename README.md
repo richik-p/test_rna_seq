@@ -1,7 +1,8 @@
 # Automate RNA Sequencing
 
 ## Step 1
-run `preprocess_env.sh`
+run `chmod +x preprocess_env.sh`
+run `./preprocess_env.sh`
 
 ## Step 2
 run `gen_bash.py`
