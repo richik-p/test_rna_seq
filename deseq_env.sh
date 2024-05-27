@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FILE = "deseq.yml"
+FILE="deseq.yml"
 # Extract the name of the environment from the FILE file
 ENV_NAME=$(grep 'name:' $FILE | cut -d ' ' -f 2)
 
