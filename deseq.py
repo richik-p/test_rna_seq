@@ -36,7 +36,6 @@ for file in files:
             condition1 = "normal"
         else:
             condition2 = "tumor"
-            break
 
 # add alpha for padj cutoff by user input
 commands.append('alpha <- 0.05') # get alpha from user input
@@ -103,7 +102,7 @@ commands.append('resSig <- resLFC[which(resLFC$padj < alpha & abs(resLFC$log2Fol
 commands.append('write.table(resSig, file=os.path.join(output_directory, "DESeq2", "DESeq2_significant_results.txt"), sep="\t")')
 
 # generate a file in r script to run deseq2
-with open(os.path.join(output_directory, "deseq", "DESeq2_script.R"), 'w') as f: # TODO change output file location later 
+with open("DESeq2_script.r", 'w') as f: # TODO change output file location later 
     f.write("\n".join(commands))
 
 # run the script
